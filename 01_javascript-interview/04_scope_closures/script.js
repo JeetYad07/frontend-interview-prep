@@ -215,3 +215,49 @@ const isSubscribe = likeTheVideo()
 // isSubscribe()
 
 // Polyfill for Once();
+function once(func, context){
+    let ran;
+    return function(){
+        if(func){
+            ran = func.apply(context || this, arguments);
+            func = null;
+        }
+         return ran
+    }
+
+   
+}
+const currFun = once((a,b) => console.log("This is current context",a,b));
+// currFun(1,2)
+// currFun()
+// currFun()
+// currFun()
+
+// Q9: Polyfill of Memorize
+
+function memorize(fn,context){
+    let res = {};
+    return function(...args){
+        let argsCache = JSON.stringify(args);
+        if(!res[argsCache]){
+            res[argsCache] = fn.call(context || this, ...args);
+        }
+        return res[argsCache];
+
+    }
+
+}
+
+const clusmyProduct = (num1, num2) => {
+    for (let i = 1; i <= 100000000; i++) {}
+    return num1 * num2;
+}
+const memorizeClumsyProduct = memorize(clusmyProduct);
+
+console.time("First Call");
+console.log(memorizeClumsyProduct(9876,8976));
+console.timeEnd("First Call");
+
+console.time("Second Call");
+console.log(memorizeClumsyProduct(9826,8936));
+console.timeEnd("Second Call");
